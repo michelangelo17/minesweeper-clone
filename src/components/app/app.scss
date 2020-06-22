@@ -15,11 +15,10 @@
       width: 52px;
       height: 52px;
       font-size: 35px;
-      @include borders(#7b7b7b, white);
+      @include button;
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
     }
   }
   .body {

@@ -8,4 +8,9 @@
 }
 
 @mixin button {
+  @include borders(#7b7b7b, white);
+  cursor: pointer;
+  &:active {
+    @include borders;
+  }
 }
