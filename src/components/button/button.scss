@@ -1,0 +1,7 @@
+@import '../../mixins/index.scss';
+
+.button {
+  @include borders(#7b7b7b, white);
+  width: 30px;
+  height: 30px;
+}
