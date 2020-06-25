@@ -5,6 +5,7 @@ import {
   generateCells,
   TOTAL_BOMBS,
   makeCellBlockVisible,
+  checkGameWon,
 } from '../../utils/index'
 import Button from '../button'
 import { face, cell, cellState, cellValue } from '../../types'
@@ -24,9 +25,11 @@ const App: React.FC = () => {
   }, [running, time])
 
   const handleCellClick = (rowParam: number, colParam: number) => {
+    if (curFace === face.lost || curFace === face.won) return
     if (!running) setRunning(true)
 
     let newCells = cells.slice()
+
     const currentCell = newCells[rowParam][colParam]
 
     if (currentCell.state === cellState.flagged) return
@@ -40,12 +43,17 @@ const App: React.FC = () => {
       newCells = makeCellBlockVisible(newCells, rowParam, colParam)
     } else currentCell.state = cellState.visible
     setCells(newCells)
+    if (checkGameWon(cells)) {
+      setCurFace(face.won)
+      setRunning(false)
+    }
   }
 
   const restartGame = () => {
     setRunning(false)
     setCurFace(face.smile)
     setTime(0)
+    setFlags(TOTAL_BOMBS)
     setCells(generateCells())
   }
 
@@ -55,7 +63,7 @@ const App: React.FC = () => {
     colParam: number
   ) => {
     e.preventDefault()
-    setRunning(true)
+    if (curFace === face.lost || (curFace === face.won && running)) return
     const curCell = cells[rowParam][colParam]
     if (flags < TOTAL_BOMBS && curCell.state === cellState.flagged) {
       curCell.state = cellState.open
@@ -66,7 +74,10 @@ const App: React.FC = () => {
       curCell.state = cellState.flagged
       setFlags(flags - 1)
     }
-    console.log(curCell)
+    if (checkGameWon(cells)) {
+      setCurFace(face.won)
+      setRunning(false)
+    }
   }
 
   const renderCells = (): React.ReactNode =>
@@ -79,6 +90,7 @@ const App: React.FC = () => {
           state={cell.state}
           value={cell.value}
           setCurFace={setCurFace}
+          curFace={curFace}
           handleCellClick={handleCellClick}
           addFlag={addFlag}
         />

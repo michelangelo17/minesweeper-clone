@@ -8,6 +8,7 @@ interface ButtonProps {
   state: cellState
   value: cellValue
   setCurFace: React.Dispatch<React.SetStateAction<face>>
+  curFace: face
   handleCellClick: (rowParam: number, colParam: number) => void
   addFlag: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -22,6 +23,7 @@ const Button: React.FC<ButtonProps> = ({
   state,
   value,
   setCurFace,
+  curFace,
   handleCellClick,
   addFlag,
 }) => {
@@ -43,14 +45,22 @@ const Button: React.FC<ButtonProps> = ({
       )
     }
   }
-  const mouse = (aface: face) => setCurFace(aface)
+  const mouseDown = (aface: face) =>
+    curFace !== face.lost &&
+    curFace !== face.won &&
+    state !== cellState.visible &&
+    state !== cellState.flagged &&
+    setCurFace(aface)
+
   return (
     <div
       className={`button ${
         state === cellState.visible && 'visible'
       } value-${value}`}
-      onMouseDown={() => mouse(face.nervous)}
-      onMouseUp={() => mouse(face.smile)}
+      onMouseDown={() => mouseDown(face.nervous)}
+      onMouseUp={() =>
+        curFace !== face.lost && curFace !== face.won && setCurFace(face.smile)
+      }
       onClick={() => handleCellClick(row, col)}
       onContextMenu={(e) => addFlag(e, row, col)}
     >

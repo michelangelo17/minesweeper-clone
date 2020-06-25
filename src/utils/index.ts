@@ -39,11 +39,13 @@ const getNeighborInfo = (
       }
     }
   }
+
   return returnObj
 }
 
 export const generateCells = (): cell[][] => {
   const cells: cell[][] = []
+
   for (let row = 0; row < MAX_ROWS; row++) {
     cells.push([])
     for (let col = 0; col < MAX_COLS; col++) {
@@ -61,6 +63,7 @@ export const generateCells = (): cell[][] => {
     const col = Math.floor(Math.random() * MAX_COLS)
 
     const currentCell = cells[row][col]
+
     if (currentCell.value !== cellValue.bomb) {
       currentCell.value = cellValue.bomb
       bombsPlaced++
@@ -71,6 +74,7 @@ export const generateCells = (): cell[][] => {
     row.forEach((cell, colIndex) => {
       const numberOfBombs = getNeighborInfo(cell, rowIndex, colIndex, cells)
         .bombCount
+
       if (numberOfBombs > 0) cells[rowIndex][colIndex].value = numberOfBombs
     })
   )
@@ -85,9 +89,12 @@ export const makeCellBlockVisible = (
 ): cell[][] => {
   const newCells = cells.slice()
   const currentCell = newCells[rowParam][colParam]
+
   currentCell.state = cellState.visible
+
   const neighbors = getNeighborInfo(currentCell, rowParam, colParam, cells)
     .neighbors
+
   neighbors.forEach((cellDetail) => {
     if (
       cellDetail.cell.state !== cellState.flagged &&
@@ -100,5 +107,28 @@ export const makeCellBlockVisible = (
           cellState.visible
     }
   })
+
   return newCells
+}
+
+export const checkGameWon = (gameCells: cell[][]): boolean => {
+  let coveredBombs = 0
+  let notVisible = 0
+  gameCells.forEach((row) =>
+    row.forEach((cellObj) => {
+      if (
+        cellObj.state === cellState.flagged &&
+        cellObj.value === cellValue.bomb
+      )
+        coveredBombs++
+      if (
+        cellObj.state === cellState.open ||
+        cellObj.state === cellState.flagged
+      ) {
+        notVisible++
+      }
+    })
+  )
+  if (coveredBombs === TOTAL_BOMBS && notVisible === coveredBombs) return true
+  else return false
 }
