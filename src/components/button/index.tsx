@@ -7,6 +7,7 @@ interface ButtonProps {
   col: number
   state: cellState
   value: cellValue
+  red?: boolean
   setCurFace: React.Dispatch<React.SetStateAction<face>>
   curFace: face
   handleCellClick: (rowParam: number, colParam: number) => void
@@ -26,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
   curFace,
   handleCellClick,
   addFlag,
+  red,
 }) => {
   const renderContent = (): React.ReactNode => {
     if (state === cellState.visible) {
@@ -56,7 +58,7 @@ const Button: React.FC<ButtonProps> = ({
     <div
       className={`button ${
         state === cellState.visible && 'visible'
-      } value-${value}`}
+      } value-${value} ${red === true && 'red'}`}
       onMouseDown={() => mouseDown(face.nervous)}
       onMouseUp={() =>
         curFace !== face.lost && curFace !== face.won && setCurFace(face.smile)

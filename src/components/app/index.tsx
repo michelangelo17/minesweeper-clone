@@ -26,17 +26,29 @@ const App: React.FC = () => {
 
   const handleCellClick = (rowParam: number, colParam: number) => {
     if (curFace === face.lost || curFace === face.won) return
-    if (!running) setRunning(true)
-
     let newCells = cells.slice()
+    let currentCell = newCells[rowParam][colParam]
 
-    const currentCell = newCells[rowParam][colParam]
+    if (!running) {
+      while (currentCell.value === cellValue.bomb) {
+        newCells = generateCells()
+        currentCell = newCells[rowParam][colParam]
+      }
+      setRunning(true)
+    }
 
     if (currentCell.state === cellState.flagged) return
     if (currentCell.state === cellState.visible) return
 
     if (currentCell.value === cellValue.bomb) {
-      currentCell.state = cellState.visible
+      currentCell.red = true
+      newCells.forEach((row) =>
+        row.forEach(
+          (cellObj) =>
+            cellObj.value === cellValue.bomb &&
+            (cellObj.state = cellState.visible)
+        )
+      )
       setCurFace(face.lost)
       setRunning(false)
     } else if (currentCell.value === cellValue.none) {
@@ -93,6 +105,7 @@ const App: React.FC = () => {
           curFace={curFace}
           handleCellClick={handleCellClick}
           addFlag={addFlag}
+          red={cell.red}
         />
       ))
     )
