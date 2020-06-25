@@ -18,3 +18,15 @@ export enum cellState {
 }
 
 export type cell = { value: cellValue; state: cellState }
+
+export enum face {
+  smile = '🙂',
+  nervous = '😬',
+  lost = '😭',
+  won = '🤑',
+}
+
+export type neighborInfo = {
+  neighbors: { cell: cell; rowParam: number; colParam: number }[]
+  bombCount: number
+}

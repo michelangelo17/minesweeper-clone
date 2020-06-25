@@ -14,3 +14,14 @@
     @include borders;
   }
 }
+
+@mixin mine-button {
+  @include button;
+  // &:hover {
+  //   @include borders;
+  //   opacity: 0;
+  // }
+  &:active {
+    opacity: 1;
+  }
+}

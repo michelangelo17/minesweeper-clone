@@ -1,7 +1,7 @@
 @import '../../mixins/index.scss';
 
 .button {
-  @include button;
+  @include mine-button;
   width: 30px;
   height: 30px;
   display: flex;

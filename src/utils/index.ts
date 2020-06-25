@@ -1,19 +1,22 @@
-import { cellValue, cellState, cell } from '../types'
+import { cellValue, cellState, cell, neighborInfo } from '../types'
 
 // variables
 const MAX_ROWS = 9
 const MAX_COLS = 9
-const TOTAL_BOMBS = 10
+export const TOTAL_BOMBS = 10
 
 //functions
 
-const countBombs = (
+const getNeighborInfo = (
   c: cell,
   rowIndex: number,
   colIndex: number,
   cells: cell[][]
-): number => {
-  let numberOfBombs = 0
+): neighborInfo => {
+  const returnObj: neighborInfo = {
+    neighbors: [],
+    bombCount: 0,
+  }
   if (c.value !== cellValue.bomb) {
     for (let checkRow = rowIndex - 1; checkRow <= rowIndex + 1; checkRow++) {
       if (checkRow >= 0 && checkRow <= MAX_ROWS - 1) {
@@ -23,15 +26,20 @@ const countBombs = (
           checkCol++
         ) {
           if (checkCol >= 0 && checkCol <= MAX_COLS - 1) {
+            returnObj.neighbors.push({
+              cell: cells[checkRow][checkCol],
+              rowParam: checkRow,
+              colParam: checkCol,
+            })
             if (cells[checkRow][checkCol].value === cellValue.bomb) {
-              numberOfBombs++
+              returnObj.bombCount++
             }
           }
         }
       }
     }
   }
-  return numberOfBombs
+  return returnObj
 }
 
 export const generateCells = (): cell[][] => {
@@ -61,10 +69,36 @@ export const generateCells = (): cell[][] => {
 
   cells.forEach((row, rowIndex) =>
     row.forEach((cell, colIndex) => {
-      const numberOfBombs = countBombs(cell, rowIndex, colIndex, cells)
+      const numberOfBombs = getNeighborInfo(cell, rowIndex, colIndex, cells)
+        .bombCount
       if (numberOfBombs > 0) cells[rowIndex][colIndex].value = numberOfBombs
     })
   )
 
   return cells
+}
+
+export const makeCellBlockVisible = (
+  cells: cell[][],
+  rowParam: number,
+  colParam: number
+): cell[][] => {
+  const newCells = cells.slice()
+  const currentCell = newCells[rowParam][colParam]
+  currentCell.state = cellState.visible
+  const neighbors = getNeighborInfo(currentCell, rowParam, colParam, cells)
+    .neighbors
+  neighbors.forEach((cellDetail) => {
+    if (
+      cellDetail.cell.state !== cellState.flagged &&
+      cellDetail.cell.state !== cellState.visible
+    ) {
+      if (cellDetail.cell.value === cellValue.none)
+        makeCellBlockVisible(newCells, cellDetail.rowParam, cellDetail.colParam)
+      else
+        newCells[cellDetail.rowParam][cellDetail.colParam].state =
+          cellState.visible
+    }
+  })
+  return newCells
 }
