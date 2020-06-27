@@ -3,7 +3,7 @@ import { cellValue, cellState, cell, neighborInfo } from '../types'
 // variables
 const MAX_ROWS = 9
 const MAX_COLS = 9
-export const TOTAL_BOMBS = 10
+export const TOTAL_BOMBS = 2
 
 //functions
 
@@ -51,7 +51,7 @@ export const generateCells = (): cell[][] => {
     for (let col = 0; col < MAX_COLS; col++) {
       cells[row].push({
         value: cellValue.none,
-        state: cellState.open,
+        state: cellState.hidden,
       })
     }
   }
@@ -122,7 +122,7 @@ export const checkGameWon = (gameCells: cell[][]): boolean => {
       )
         coveredBombs++
       if (
-        cellObj.state === cellState.open ||
+        cellObj.state === cellState.hidden ||
         cellObj.state === cellState.flagged
       ) {
         notVisible++

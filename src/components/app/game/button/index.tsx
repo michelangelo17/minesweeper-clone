@@ -1,6 +1,6 @@
 import React from 'react'
 import './button.scss'
-import { cellState, cellValue, face } from '../../types'
+import { cellState, cellValue, face } from '../../../../types'
 
 interface ButtonProps {
   row: number
@@ -11,7 +11,7 @@ interface ButtonProps {
   setCurFace: React.Dispatch<React.SetStateAction<face>>
   curFace: face
   handleCellClick: (rowParam: number, colParam: number) => void
-  addFlag: (
+  handleRightClick: (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     rowParam: number,
     colParam: number
@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   setCurFace,
   curFace,
   handleCellClick,
-  addFlag,
+  handleRightClick,
   red,
 }) => {
   const renderContent = (): React.ReactNode => {
@@ -64,7 +64,7 @@ const Button: React.FC<ButtonProps> = ({
         curFace !== face.lost && curFace !== face.won && setCurFace(face.smile)
       }
       onClick={() => handleCellClick(row, col)}
-      onContextMenu={(e) => addFlag(e, row, col)}
+      onContextMenu={(e) => handleRightClick(e, row, col)}
     >
       {renderContent()}
     </div>
